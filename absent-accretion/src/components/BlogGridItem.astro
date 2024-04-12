@@ -1,0 +1,39 @@
+---
+const { post } = Astro.props;
+const { slug, featuredImage, title, excerpt, author } = post.attributes;
+const url = import.meta.env.STRAPI_URL;
+
+const authorImage = author.data.attributes.bioImage.data.attributes.url || null;
+const postImage = featuredImage?.data?.attributes?.url ?? null;
+---
+
+<div
+  class=" bg-sky-950 rounded-md overflow-hidden shadow-sm p-4 transition-transform h-auto border-2 border-solid border-slate-50"
+>
+  <a href={`/post/${slug}`}>
+    {postImage && (
+      <div class="rounded-md h-56 w-full overflow-hidden px-5">
+        <img
+          class="object-cover w-full h-full"
+          src={url + postImage}
+        />
+      </div>
+    )}
+    <div>
+      <h1 class="my-2 font-bold text-xl sm:text-2xl md:text-3xl text-white">{title}</h1>
+      <p class="my-2 text-white line-clamp-3">{excerpt}</p>
+    </div>
+    <div class="flex justify-between my-4 items-center">
+      <div class="inline-flex rounded-md">
+        <a
+          href={`/post/${slug}`}
+          class=" hover:opacity-50 text-white"
+        >
+          Read article →
+        </a>
+      </div>
+    </div>
+  </a>
+</div>
+
+

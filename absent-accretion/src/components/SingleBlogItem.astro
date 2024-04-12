@@ -1,0 +1,162 @@
+---
+import { marked } from "marked";
+import { formatDistance, format } from 'date-fns';
+import { ViewTransitions } from 'astro:transitions';
+import Header from "../pages/header.astro";
+
+const { post } = Astro.props;
+
+const { featuredImage, title, content, author, readingTime, publishedAt } = post.attributes;
+const url = import.meta.env.STRAPI_URL;
+
+const authorImage = author.data.attributes.bioImage.data.attributes.url || null;
+const postImage = featuredImage?.data?.attributes?.url ?? null;
+---
+<ViewTransitions />
+  <div class="w-full flex justify-end rounded-md">
+    <a
+      href={`/`}
+      class="items-center justify-center px-20 pt-5 font-medium rounded-md text-white pt-10  hover:text-blue-500 text-xl"
+    >
+    ← Back
+    </a>
+  </div>
+  <div class="my-4 text-center">
+    <h1 class="text-center text-white text-4xl leading-tight text-gray-900 my-4 font-bold">
+      {title}
+    </h1>
+    <div class="text-gray-500 flex justify-center items-center space-x-2">
+      <span>&middot;</span>
+      <span>{format(new Date(publishedAt), 'MM/dd/yyyy')}</span>
+      <span>&middot;</span>
+      <span>{readingTime}</span>
+    </div>
+  </div>
+  {postImage && (
+    <div class="rounded-md h-56 w-full overflow-hidden px-5">
+      <img
+        class="object-cover w-full h-full items-center"
+        src={url + postImage}
+      />
+    </div>
+  )}
+  <article class=" prose max-w-full w-full my-4 px-5">
+    <div class="rich-text" set:html={marked.parse(content)}  />
+  </article>
+
+<style is:global>
+
+  /*******************************************
+  Rich Text Styles
+  *******************************************/
+
+  /* Headers */
+  article .rich-text h1 {
+    @apply text-4xl font-bold mb-8 text-white;
+  }
+
+  article .rich-text h2 {
+    @apply text-3xl font-bold mb-8 text-white;
+  }
+
+  article .rich-text h3 {
+    @apply text-2xl font-bold mb-6 text-white;
+  }
+
+  article .rich-text h4 {
+    @apply text-xl font-bold mb-4 text-white;
+  }
+
+  article.rich-text h5 {
+    @apply text-lg font-bold mb-4 text-white;
+  }
+
+  article .rich-text h6 {
+    @apply text-base font-bold mb-4 text-white;
+  }
+
+  /* Horizontal rules */
+  article .rich-text hr {
+    @apply text-white my-8;
+  }
+
+  article .rich-text a {
+    @apply text-white underline text-xl leading-relaxed;
+  }
+
+  /* Typographic replacements */
+  article .rich-text p {
+    @apply mb-8 text-xl leading-relaxed text-white;
+  }
+
+  /* Emphasis */
+  article .rich-text strong {
+    @apply font-bold text-xl leading-relaxed;
+  }
+
+  article .rich-text em {
+    @apply italic text-xl leading-relaxed;
+  }
+
+  article .rich-text del {
+    @apply line-through text-xl leading-relaxed;
+  }
+
+  /* Blockquotes */
+  article .rich-text blockquote {
+    @apply border-l-4 border-gray-400 pl-4 py-2 mb-4;
+  }
+
+  /* Lists */
+  article .rich-text ul {
+    @apply list-disc pl-4 mb-4 text-white;
+  }
+
+  article .rich-text ol {
+    @apply list-decimal pl-4 mb-4 text-white;
+  }
+
+  article .rich-text li {
+    @apply mb-2 text-white;
+  }
+
+  article .rich-text li > ul {
+    @apply list-disc pl-4 mb-2;
+  }
+
+  article.rich-text li > ol {
+    @apply list-decimal pl-4 mb-2;
+  }
+
+  /* Code blocks */
+  article .rich-text pre {
+    @apply font-mono text-white rounded p-4  my-6;
+  }
+
+  article .rich-text code {
+    @apply font-mono text-white rounded px-2 py-1;
+  }
+
+  /* Tables */
+  article .rich-text table {
+    @apply w-full border-collapse text-gray-800 my-6;
+  }
+
+  article .rich-text th {
+    @apply text-gray-800 text-left py-2 px-4 font-semibold border-b text-gray-800;
+  }
+
+  article .rich-text td {
+    @apply py-2 px-4 border-b text-gray-800;
+  }
+
+  /* Images */
+  article .rich-text img {
+    @apply w-full object-cover rounded-xl my-6;
+  }
+
+  /* Custom containers */
+  article .rich-text .warning {
+    @apply bg-yellow-100 border-yellow-500 text-yellow-700 px-4 py-2 rounded-lg mb-4;
+  }
+</style>

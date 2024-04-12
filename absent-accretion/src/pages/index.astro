@@ -1,0 +1,44 @@
+---
+import qs from "qs";
+
+import Layout from "../layouts/Layout.astro";
+import BlogGrid from "../components/BlogGrid.astro";
+import Header from "./header.astro";
+import Home from"./Home.astro";
+import Footer from "./Footer.astro";
+import { ViewTransitions } from 'astro:transitions';
+
+let url = import.meta.env.STRAPI_URL + "/api/posts";
+
+const query = qs.stringify({
+  populate: {
+    featuredImage: {
+      fields: ["name", "width", "height", "url"],
+    },
+    author: {
+      populate: {
+        bioImage: {
+          fields: ["name", "width", "height", "url"],
+        },
+      },
+    },
+    category: {
+      populate: true,
+    },
+  },
+});
+
+const posts = await fetch(url + "?" + query).then((response) =>
+  response.json()
+);
+---
+<Layout title="Alan's blog">
+  <Header />
+  <main class="bg-gradient-to-r from-slate-900 to-gray-800  flex flex-col">
+    <Home />
+    <BlogGrid posts={posts} />
+    <Footer />
+    <ViewTransitions />
+  </main>
+</Layout>
+
